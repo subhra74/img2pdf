@@ -6,14 +6,15 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      images: []
+      images: [],
+      lastError:undefined
     };
     this.fileInput = React.createRef();
   }
   render() {
     return (
       <div>
-        <div>Donec sollicitudin tristique enim. Fusce elementum vitae mi sed porta. Maecenas posuere pharetra velit ut vulputate. Integer volutpat velit id aliquam porttitor. Praesent finibus tempor neque, non ultrices nisl dapibus eget. Praesent a tortor nec tortor viverra dapibus id at ipsum. Aliquam in turpis sit amet tellus posuere faucibus eget et arcu.</div>
+        <div>This app is not styled yet</div>
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {this.state.images.map((img, index) => (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -27,6 +28,7 @@ class App extends React.Component {
           <button onClick={() => { this.setState({ images: [] }) }}>Clear</button>
           <button onClick={this.createPdf}>Generate PDF</button>
         </div>
+        {this.state.lastError?<div>{this.state.lastError}</div>:<div></div>}
       </div>);
   }
 
@@ -59,11 +61,9 @@ class App extends React.Component {
 
   createPdf = async () => {
     try {
-      console.log("create");
       const pdfDoc = await PDFDocument.create();
       for (let i = 0; i < this.state.images.length; i++) {
         let res=await fetch(this.state.images[i].imgDataUrl);
-        res.headers.forEach((val,key)=>console.log(key+":"+val));
         
         let raw = await res.arrayBuffer();
         //console.log(raw);
@@ -86,6 +86,7 @@ class App extends React.Component {
     }
     catch (err) {
       console.error(err);
+      this.setState({lastError:err});
     }
   }
 
