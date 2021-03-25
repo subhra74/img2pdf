@@ -87,12 +87,13 @@ class App extends React.Component {
         });
       }
       const pdfBytes = await pdfDoc.save();
-      var blob = new Blob([pdfBytes], { type: "application/pdf" });
-      var link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      var fileName = "file.pdf";
-      link.download = fileName;
-      link.click();
+      let blob = new Blob([pdfBytes], { type: "application/pdf" });
+      window.open(window.URL.createObjectURL(blob));
+      // let link = document.createElement('a');
+      // link.href = window.URL.createObjectURL(blob);
+      // let fileName = "file.pdf";
+      // link.download = fileName;
+      // link.click();
     }
     catch (err) {
       console.error(err);
