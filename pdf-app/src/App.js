@@ -2,6 +2,19 @@ import './App.css';
 import React from 'react';
 import { PageSizes, PDFDocument } from 'pdf-lib'
 
+import {polyfill} from "mobile-drag-drop";
+
+// optional import of scroll behaviour
+import {scrollBehaviourDragImageTranslateOverride} from "mobile-drag-drop/scroll-behaviour";
+
+// options are optional ;)
+polyfill({
+    // use this to make use of the scroll behaviour
+    dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride
+});
+
+window.addEventListener( 'touchmove', function() {});
+
 const A4 = "A4", Letter = "US Letter", Fit = "Same as Image", Portrait = "Portrait", Landscape = "Landscape", None = "0", Small = "20", Big = "50";
 
 class App extends React.Component {
@@ -74,7 +87,7 @@ class App extends React.Component {
               e.preventDefault(); // stops the browser from redirecting.
             }
           }}
-          onDragEnter={(e) => { }}
+          onDragEnter={(e) => { e.preventDefault() }}
         >
           <div style={{ ...pageWrapper }}>
             <div style={{ ...pageStyle, backgroundImage: "url('" + img.imgDataUrl + "')" }}>
