@@ -7,7 +7,8 @@ class App extends React.Component {
     super(props);
     this.state = {
       images: [],
-      lastError:undefined
+      lastError:undefined,
+      lastMime:undefined
     };
     this.fileInput = React.createRef();
   }
@@ -28,7 +29,12 @@ class App extends React.Component {
           <button onClick={() => { this.setState({ images: [] }) }}>Clear</button>
           <button onClick={this.createPdf}>Generate PDF</button>
         </div>
-        {this.state.lastError?<div>{this.state.lastError}</div>:<div></div>}
+        {this.state.lastError?
+        <div>
+          <div>{this.state.lastError}</div>
+          <div>{this.state.lastMime}</div>
+        </div>:<div>{this.state.lastMime}</div>}
+        <div>{this.state.lastMime}</div>
       </div>);
   }
 
@@ -60,14 +66,18 @@ class App extends React.Component {
   }
 
   createPdf = async () => {
+    
+    let mime="";
     try {
       const pdfDoc = await PDFDocument.create();
       for (let i = 0; i < this.state.images.length; i++) {
         let res=await fetch(this.state.images[i].imgDataUrl);
         
         let raw = await res.arrayBuffer();
+        mime=res.headers.get('content-type');
+        console.log(res.headers.get('content-type'));
         //console.log(raw);
-        const img = await (res.headers['content-type']==='image/jpeg'?pdfDoc.embedJpg(raw):pdfDoc.embedPng(raw));
+        const img = await (res.headers.get('content-type')==='image/jpeg'?pdfDoc.embedJpg(raw):pdfDoc.embedPng(raw));
         const page = pdfDoc.addPage();
         page.drawImage(img, {
           x: 0,
@@ -86,7 +96,7 @@ class App extends React.Component {
     }
     catch (err) {
       console.error(err);
-      this.setState({lastError:err});
+      this.setState({lastError:err,lastMime:mime});
     }
   }
 
